@@ -15,9 +15,9 @@
         android:paddingLeft="50dp"
         android:paddingRight="50dp"
         android:paddingTop="96dp"
-        swipedeck:max_visible="3"
+        swipedeck:max_visible="4"
         swipedeck:render_above="false"
-        swipedeck:card_spacing="15dp"/>
+        swipedeck:card_spacing="5dp" />
         <!--swipedeck:preview_layout="@layout/test_card2"/>-->
 
 

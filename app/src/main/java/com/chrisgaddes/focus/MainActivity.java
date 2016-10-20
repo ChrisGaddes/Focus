@@ -13,8 +13,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +29,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<String> testData;
     private CheckBox dragCheckbox;
 
+
+    private ArrayList<String> images;
+    private String str_probCurrent_file_name;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,10 +40,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cardStack = (SwipeDeck) findViewById(R.id.swipe_deck);
         dragCheckbox = (CheckBox) findViewById(R.id.checkbox_drag);
 
+
         testData = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 52; i++) {
             testData.add(String.valueOf(i));
         }
+        initializeImages();
 
         adapter = new SwipeDeckAdapter(testData, this);
         if(cardStack != null){
@@ -134,7 +140,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             //((TextView) v.findViewById(R.id.textView2)).setText(data.get(position));
             ImageView imageView = (ImageView) v.findViewById(R.id.offer_image);
-            Picasso.with(context).load(R.drawable.food).fit().centerCrop().into(imageView);
+
+
+
+            str_probCurrent_file_name = images.get(position);
+//        getResources().getIdentifier(str_partCurrent_file_name, "drawable", getPackageName()
+
+            getDrawableResourceID(MainActivity.this, str_probCurrent_file_name);
+
+//            Picasso.with(context).load(R.drawable.food).fit().centerCrop().into(imageView);
+
+            Glide.with(MainActivity.this)
+                    .load(getDrawableResourceID(MainActivity.this, str_probCurrent_file_name))
+                    .error(R.drawable.ic_empty)
+                    .placeholder(R.drawable.card_blank)
+                    .into(imageView);
+
+
+
+
             TextView textView = (TextView) v.findViewById(R.id.sample_text);
             String item = (String)getItem(position);
             textView.setText(item);
@@ -149,6 +173,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
             return v;
+        }
+    }
+    public static int getDrawableResourceID(Context context, String drawableResourceName) {
+        return context.getResources().getIdentifier(drawableResourceName, "drawable", context.getPackageName());
+    }
+
+    private void initializeImages() {
+        images = new ArrayList<>();
+        for (int i = 0; i < Constant.IMAGES.length; i++) {
+            images.add(Constant.IMAGES[i]);
         }
     }
 }

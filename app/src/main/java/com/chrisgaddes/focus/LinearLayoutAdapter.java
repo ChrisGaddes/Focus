@@ -69,16 +69,16 @@ public class LinearLayoutAdapter extends CustomRecyclerViewAdapter {
 
         Glide.with(activity)
                 .load(getDrawableResourceID(activity, str_probCurrent_file_name))
-                .error(R.drawable.ic_empty)
-                .placeholder(R.drawable.ic_launcher)
+                .error(R.drawable.card_blank)
+                .placeholder(R.drawable.card_blank)
                 .centerCrop()
                 .into((myHolder.images));
 
 
         Glide.with(activity)
                 .load(getDrawableResourceID(activity, str_probCurrent_file_name))
-                .error(R.drawable.ic_empty)
-                .placeholder(R.drawable.ic_launcher)
+                .error(R.drawable.card_blank)
+                .placeholder(R.drawable.card_blank)
                 .centerCrop()
                 .into((myHolder.imagesright));
 
