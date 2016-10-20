@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -42,13 +43,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         testData = new ArrayList<>();
-        for (int i = 0; i < 52; i++) {
+        for (int i = 0; i < 7; i++) {
             testData.add(String.valueOf(i));
         }
         initializeImages();
 
         adapter = new SwipeDeckAdapter(testData, this);
-        if(cardStack != null){
+        if (cardStack != null) {
             cardStack.setAdapter(adapter);
         }
         cardStack.setCallback(new SwipeDeck.SwipeDeckCallback() {
@@ -81,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button btn3 = (Button) findViewById(R.id.button_center);
         btn3.setOnClickListener(this);
 
+        Button btn4 = (Button) findViewById(R.id.button_refresh);
+        btn4.setOnClickListener(this);
+
     }
 
     @Override
@@ -97,6 +101,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.button_center:
                 cardStack.unSwipeCard();
+                break;
+
+            case R.id.button_refresh:
+                refresh();
                 break;
 
             default:
@@ -142,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ImageView imageView = (ImageView) v.findViewById(R.id.offer_image);
 
 
-
             str_probCurrent_file_name = images.get(position);
 //        getResources().getIdentifier(str_partCurrent_file_name, "drawable", getPackageName()
 
@@ -157,10 +164,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .into(imageView);
 
 
-
-
             TextView textView = (TextView) v.findViewById(R.id.sample_text);
-            String item = (String)getItem(position);
+            String item = (String) getItem(position);
             textView.setText(item);
 
             v.setOnClickListener(new View.OnClickListener() {
@@ -175,14 +180,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return v;
         }
     }
+
     public static int getDrawableResourceID(Context context, String drawableResourceName) {
         return context.getResources().getIdentifier(drawableResourceName, "drawable", context.getPackageName());
     }
 
     private void initializeImages() {
         images = new ArrayList<>();
+        images.clear();
         for (int i = 0; i < Constant.IMAGES.length; i++) {
             images.add(Constant.IMAGES[i]);
         }
+        Collections.shuffle(images);
     }
+
+    private void refresh() {
+        Log.d(TAG, String.valueOf(cardStack.getAdapterIndex()));
+        goToTopOfDeck();
+        initializeImages();
+    }
+
+    private void setDeckSize(int size) {
+           images.subList(size, images.size()).clear();
+    }
+
+    private void goToTopOfDeck() {
+        for(int n=0; n<=cardStack.getAdapterIndex(); n++){
+            cardStack.unSwipeCard();
+            Log.d(TAG, String.valueOf(cardStack.getAdapterIndex()));
+        }
+    }
+
 }

@@ -5,7 +5,7 @@
     android:layout_gravity="center"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="4dp"
+    card_view:cardCornerRadius="14dp"
     card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="true"
     android:layout_margin="8dp"
@@ -47,6 +47,7 @@
                 android:layout_below="@+id/offer_image"
                 android:layout_centerHorizontal="true" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/sample_text"
             android:layout_width="match_parent"
