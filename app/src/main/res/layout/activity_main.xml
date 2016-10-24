@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.daprlabs.aaron.swipedeck.layouts.SwipeFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/tools"
     xmlns:swipedeck="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swipeLayout"
@@ -7,109 +7,144 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
+        <include layout="@layout/options_panel" />
 
         <RelativeLayout
+            android:id="@+id/main_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:elevation="8dp">
+
+            <include layout="@layout/toolbar_layout" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:elevation="8dp">
 
 
-            <Button
-                android:id="@+id/button_left"
-                style="?android:attr/borderlessButtonStyle"
+                <!--<ImageView-->
+                    <!--android:id="@+id/swipe_down_bar"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="?attr/actionBarSize"-->
+                    <!--android:background="@color/colorPrimary" />-->
+
+                <com.chrisgaddes.focus.ChronometerView
+                    android:id="@+id/timer_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textSize="30sp"
+                    android:text="0:00"
+                    android:elevation="50dp"/>
+
+                <!--<TextView-->
+                    <!--android:id="@+id/timer"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="?attr/actionBarSize"-->
+                    <!--android:layout_alignTop="@id/toolbar"-->
+                    <!--android:layout_alignBottom="@id/toolbar"-->
+                    <!--android:layout_alignParentTop="true"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:padding="20dp"-->
+                    <!--android:elevation="20dp"-->
+                    <!--android:text="Center" />-->
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/debugging_text"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Text"
+                android:textColor="@android:color/black" />
+
+            <CheckBox
+                android:id="@+id/checkbox_drag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
-                android:background="?android:attr/selectableItemBackground"
+                android:layout_alignParentTop="true"
+                android:checked="true"
                 android:padding="16dp"
-                android:text="swipe left" />
+                android:text="Drag enabled"
+                android:visibility="invisible" />
 
 
-            <Button
-                android:id="@+id/button_right"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:padding="16dp"
-                android:text="swipe right" />
 
-            <Button
-                android:id="@+id/button_center"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/button_left"
-                android:layout_alignParentBottom="true"
-                android:layout_alignRight="@id/button_right"
-                android:layout_centerHorizontal="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:padding="16dp"
-                android:text="Undo" />
+                android:background="@android:color/white"
+                android:fitsSystemWindows="true">
+
+
+                <Button
+                    android:id="@+id/button_left"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:padding="16dp"
+                    android:text="swipe left" />
+
+
+                <Button
+                    android:id="@+id/button_right"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:padding="16dp"
+                    android:text="swipe right" />
+
+                <Button
+                    android:id="@+id/button_center"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_alignParentBottom="true"
+
+                    android:layout_centerHorizontal="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:padding="16dp"
+                    android:text="Undo" />
+
+            </RelativeLayout>
+
+            <android.support.percent.PercentRelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:elevation="11dp">
+
+                <com.daprlabs.aaron.swipedeck.SwipeDeck
+                    android:id="@+id/swipe_deck"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:elevation="11dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="?attr/actionBarSize"
+                    app:layout_aspectRatio="71.6%"
+                    swipedeck:card_spacing="4dp"
+                    swipedeck:max_visible="4"
+                    swipedeck:render_above="false" />
+                <!--swipedeck:preview_layout="@layout/test_card2"/>-->
+
+            </android.support.percent.PercentRelativeLayout>
 
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/button_refresh"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:padding="16dp"
-            android:text="refresh" />
-
-        <CheckBox
-            android:id="@+id/checkbox_drag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:checked="true"
-            android:padding="16dp"
-            android:text="Drag enabled"
-            android:visibility="invisible" />
-
-        <android.support.percent.PercentRelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:clipChildren="false"
-            >
-
-            <com.daprlabs.aaron.swipedeck.SwipeDeck
-                android:id="@+id/swipe_deck"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="?attr/actionBarSize"
-                app:layout_aspectRatio="71.6%"
-                swipedeck:card_spacing="4dp"
-                swipedeck:max_visible="4"
-                swipedeck:render_above="false" />
-            <!--swipedeck:preview_layout="@layout/test_card2"/>-->
-
-        </android.support.percent.PercentRelativeLayout>
-
-
     </RelativeLayout>
-</com.daprlabs.aaron.swipedeck.layouts.SwipeFrameLayout>
+</FrameLayout>

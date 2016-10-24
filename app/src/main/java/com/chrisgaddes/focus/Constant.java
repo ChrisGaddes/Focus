@@ -4,7 +4,7 @@ package com.chrisgaddes.focus;
  * Created by Nikunj Popat on 16-12-2015.
  */
 public class Constant {
-    public static final String[] IMAGES = new String[]{
+    public static final String[] CLUBS = new String[]{
             "clubs_ace",
             "clubs_2",
             "clubs_3",
@@ -19,6 +19,9 @@ public class Constant {
             "clubs_queen",
             "clubs_king",
 
+    };
+
+    public static final String[] DIAMONDS = new String[]{
             "diamonds_ace",
             "diamonds_2",
             "diamonds_3",
@@ -32,7 +35,10 @@ public class Constant {
             "diamonds_jack",
             "diamonds_queen",
             "diamonds_king",
+    };
 
+
+    public static final String[] SPADES = new String[]{
             "spades_ace",
             "spades_2",
             "spades_3",
@@ -46,7 +52,9 @@ public class Constant {
             "spades_jack",
             "spades_queen",
             "spades_king",
+    };
 
+    public static final String[] HEARTS = new String[]{
             "hearts_ace",
             "hearts_2",
             "hearts_3",

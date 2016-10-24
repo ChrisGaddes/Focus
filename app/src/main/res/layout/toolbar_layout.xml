@@ -1,0 +1,32 @@
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:background="@android:color/white"
+    android:elevation="8dp"
+    android:minHeight="?attr/actionBarSize"
+    app:titleTextColor="@android:color/black">
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <!--<TextView-->
+        <!--android:id="@+id/left"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Left Text"/>-->
+
+
+        <!--<TextView-->
+            <!--android:id="@+id/right"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Swipe Down for Options" />-->
+
+    </LinearLayout>
+</android.support.v7.widget.Toolbar>

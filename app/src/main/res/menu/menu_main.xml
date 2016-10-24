@@ -1,15 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/miCompose"
+        android:id="@+id/menu_refresh"
         android:icon="@drawable/ic_refresh"
-        app:showAsAction="ifRoom"
-        android:title="Refresh">
-    </item>
+        android:title="Refresh"
+        app:showAsAction="ifRoom" />
+
     <item
-        android:id="@+id/miProfile"
+        android:id="@+id/menu_pause"
+        android:icon="@drawable/ic_pause"
+        android:title="Refresh"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_overflow"
         android:icon="@drawable/ic_more_vert"
-        app:showAsAction="ifRoom|withText"
-        android:title="Profile">
-    </item>
+        android:title="Profile"
+        app:showAsAction="never" />
 </menu>

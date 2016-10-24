@@ -44,10 +44,10 @@ public class RecyclerViewDisplayActivity extends AppCompatActivity {
     }
 
     private void initializeImages() {
-        images = new ArrayList<>();
-        for (int i = 0; i < Constant.IMAGES.length; i++) {
-            images.add(Constant.IMAGES[i]);
-        }
+//        images = new ArrayList<>();
+//        for (int i = 0; i < Constant.IMAGES.length; i++) {
+//            images.add(Constant.IMAGES[i]);
+//        }
         getSupportActionBar().setTitle(getIntent().getStringExtra(Constant.LAYOUT_MANAGER));
     }
 

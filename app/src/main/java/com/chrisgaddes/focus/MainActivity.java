@@ -3,15 +3,26 @@ package com.chrisgaddes.focus;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
@@ -24,35 +35,244 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
-    private SwipeDeck cardStack;
+    private SwipeDeck swipeDeck;
     private Context context = this;
     private SwipeDeckAdapter adapter;
     private ArrayList<String> testData;
     private CheckBox dragCheckbox;
 
+    private boolean use_spades;
+    private boolean use_hearts;
+    private boolean use_clubs;
+    private boolean use_diamonds;
+
+
+    private boolean timer_running;
+
+    private ChronometerView timer_view;
+
 
     private ArrayList<String> images;
     private String str_probCurrent_file_name;
+    private Toolbar toolbar;
+    private Toolbar swipe_down_bar;
+    private RelativeLayout main_layout;
+    private float dX, dY;
+    private float dx_down_pt, dy_down_pt;
+    private float size_panel;
+    private boolean panel_open;
+    private TextView debugging_text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        cardStack = (SwipeDeck) findViewById(R.id.swipe_deck);
-        dragCheckbox = (CheckBox) findViewById(R.id.checkbox_drag);
+
+
+
+        size_panel = dpToPx(54 * 4 + 24);
+
+        // As we're using a Toolbar, we should retrieve it and set it
+        // to be our ActionBar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+//            toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+        }
+
+        swipe_down_bar = (Toolbar) findViewById(R.id.toolbar);
+        main_layout = (RelativeLayout) findViewById(R.id.main_layout);
+        debugging_text = (TextView) findViewById(R.id.debugging_text);
+
+        // Swipe down "menu"
+        swipe_down_bar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                switch (event.getAction()) {
+
+                    case MotionEvent.ACTION_DOWN:
+
+                        if (!panel_open) {
+                            dY = v.getY() - event.getRawY();
+                        } else {
+                            dY = size_panel - event.getRawY();
+                        }
+
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+                        String text_debug = "event.getRawY: " + String.valueOf(event.getRawY()) + "\n panel: " + String.valueOf(size_panel) + "\n dY: " + String.valueOf(dY);
+                        debugging_text.setText(text_debug);
+
+                        main_layout.animate()
+                                //.x(event.getRawX() + dX)
+                                .y(event.getRawY() + dY)
+                                .setDuration(0)
+                                .start();
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+//                        dX = v.getX() - event.getRawX();
+                        dY = v.getY() - event.getRawY();
+
+                        // TODO fix interpolators to not always close on touch
+                        if (!panel_open) {
+
+                            if (event.getRawY() < dpToPx(75)) {
+                                main_layout.animate()
+                                        //.x(event.getRawX() + dX)
+                                        .y(event.getRawY() + dY)
+                                        .setDuration(200)
+                                        .setInterpolator(new AccelerateDecelerateInterpolator())
+                                        .start();
+                                panel_open = false;
+
+                            } else if (event.getRawY() >= dpToPx(75)) {
+                                main_layout.animate()
+                                        //.x(event.getRawX() + dX)
+                                        .y(size_panel)
+                                        .setDuration(200)
+                                        .setInterpolator(new AccelerateDecelerateInterpolator())
+                                        .start();
+                                panel_open = true;
+                            }
+                        } else {
+
+                            if (event.getRawY() < size_panel - dY - dpToPx(125)) {
+                                main_layout.animate()
+                                        //.x(event.getRawX() + dX)
+                                        .y(event.getRawY() + dY)
+                                        .setDuration(200)
+                                        .setInterpolator(new AccelerateDecelerateInterpolator())
+                                        .start();
+                                panel_open = false;
+
+                            } else if (event.getRawY() >= size_panel - dY - dpToPx(125)) {
+                                main_layout.animate()
+                                        //.x(event.getRawX() + dX)
+                                        .y(size_panel)
+                                        .setDuration(200)
+                                        .setInterpolator(new AccelerateDecelerateInterpolator())
+                                        .start();
+                                panel_open = true;
+                            }
+                        }
+
+
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
+
+
+        CheckBox ckbx_spades = (CheckBox) findViewById(R.id.ckbx_spades);
+        CheckBox ckbx_hearts = (CheckBox) findViewById(R.id.ckbx_hearts);
+        CheckBox ckbx_clubs = (CheckBox) findViewById(R.id.ckbx_clubs);
+        CheckBox ckbx_diamonds = (CheckBox) findViewById(R.id.ckbx_diamonds);
+
+        // sets listeners on suits checkboxes
+        ckbx_spades.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+                use_spades = isChecked;
+                // TODO For efficiency, make it so it doesn't load all suits each time a checkbox is changed, but just does it when the settings panel is closed
+                loadSuitsCards();
+            }
+        });
+
+        ckbx_hearts.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+                use_hearts = isChecked;
+                loadSuitsCards();
+            }
+        });
+
+        ckbx_clubs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+                use_clubs = isChecked;
+                loadSuitsCards();
+            }
+        });
+
+        ckbx_diamonds.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+                use_diamonds = isChecked;
+                loadSuitsCards();
+            }
+        });
+
+
+//        swipe_down_bar.setOnTouchListener(new View.OnTouchListener() {
+
+
+//        hideSystemUI();
+
+
+// Sets bars translucent
+//        setStatusBarTranslucent(true);
+//        setNavBarTranslucent(true);
+
+//        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+
+// Now retrieve the DrawerLayout so that we can set the status bar color.
+// This only takes effect on Lollipop, or when using translucentStatusBar
+// on KitKat.
+//        SwipeFrameLayout swipeFrameLayout = (SwipeFrameLayout) findViewById(R.id.swipeLayout);
+//        swipeFrameLayout.setStatusBarBackgroundColor();
+
+
+        swipeDeck = (SwipeDeck)
+
+                findViewById(R.id.swipe_deck);
+
+        swipeDeck.setPadding(0,
+
+                getToolbarHeight(),
+
+                0, 0); //getStatusBarHeight()
+
+        dragCheckbox = (CheckBox)
+
+                findViewById(R.id.checkbox_drag);
 
 
         testData = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
+        for (
+                int i = 0;
+                i < 53; i++)
+
+        {
             testData.add(String.valueOf(i));
         }
+
         initializeImages();
 
-        adapter = new SwipeDeckAdapter(testData, this);
-        if (cardStack != null) {
-            cardStack.setAdapter(adapter);
+        adapter = new
+
+                SwipeDeckAdapter(testData, this);
+
+        if (swipeDeck != null)
+
+        {
+            swipeDeck.setAdapter(adapter);
         }
-        cardStack.setCallback(new SwipeDeck.SwipeDeckCallback() {
+
+        swipeDeck.setCallback(new SwipeDeck.SwipeDeckCallback()
+
+        {
             @Override
             public void cardSwipedLeft(long stableId) {
                 Log.i("MainActivity", "card was swiped left, position in adapter: " + stableId);
@@ -64,15 +284,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
 
-            //            @Override
+//            @Override
+
             public boolean isDragEnabled(long itemId) {
                 return dragCheckbox.isChecked();
             }
         });
 
-        cardStack.setLeftImage(R.id.left_image);
-        cardStack.setRightImage(R.id.right_image);
+        // sets left and right images which appear on each respective swipe
+        swipeDeck.setLeftImage(R.id.left_image);
+        swipeDeck.setRightImage(R.id.right_image);
 
+        // sets onClickListeners for views
         Button btn = (Button) findViewById(R.id.button_left);
         btn.setOnClickListener(this);
 
@@ -82,9 +305,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button btn3 = (Button) findViewById(R.id.button_center);
         btn3.setOnClickListener(this);
 
-        Button btn4 = (Button) findViewById(R.id.button_refresh);
+        ImageView btn4 = (ImageView) findViewById(R.id.btn_spades_ic);
         btn4.setOnClickListener(this);
 
+        ImageView btn5 = (ImageView) findViewById(R.id.btn_hearts_ic);
+        btn5.setOnClickListener(this);
+
+        ImageView btn6 = (ImageView) findViewById(R.id.btn_clubs_ic);
+        btn6.setOnClickListener(this);
+
+        ImageView btn7 = (ImageView) findViewById(R.id.btn_diamonds_ic);
+        btn7.setOnClickListener(this);
+
+        // Loads deck
+        loadSuitsCards();
     }
 
     @Override
@@ -92,25 +326,176 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
 
             case R.id.button_left:
-                cardStack.swipeTopCardLeft(500);
+                swipeDeck.swipeTopCardLeft(500);
                 break;
 
             case R.id.button_right:
-                cardStack.swipeTopCardRight(180);
+                swipeDeck.swipeTopCardRight(180);
                 break;
 
             case R.id.button_center:
-                cardStack.unSwipeCard();
+                swipeDeck.unSwipeCard();
                 break;
 
-            case R.id.button_refresh:
-                refresh();
+            case R.id.btn_spades_ic:
+                Toast.makeText(context, "Spades", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.btn_hearts_ic:
+                Toast.makeText(context, "Hearts", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.btn_clubs_ic:
+                Toast.makeText(context, "Clubs", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.btn_diamonds_ic:
+                Toast.makeText(context, "Diamonds", Toast.LENGTH_SHORT).show();
                 break;
 
             default:
                 break;
         }
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_refresh:
+                refresh();
+                return true;
+            case R.id.menu_pause:
+                stopTimer();
+                return true;
+            case R.id.menu_overflow:
+                // Green item was selected
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    protected void setStatusBarTranslucent(boolean makeTranslucent) {
+        if (makeTranslucent) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
+
+    protected void setNavBarTranslucent(boolean makeTranslucent) {
+        if (makeTranslucent) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        }
+    }
+
+    // A method to find height of the status bar
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
+    // Calculate ActionBar height
+    public int getToolbarHeight() {
+        int result = 0;
+        TypedValue tv = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+            result = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+        }
+        return result;
+    }
+
+    public void hideStatusBar(View view) {
+        // Hide status bar
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    public void showStatusBar(View view) {
+        // Show status bar
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    // converts dp to pixels
+    private int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = MainActivity.this.getResources().getDisplayMetrics();
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+//    //Not used currently
+//    public int pxToDp(int px) {
+//        DisplayMetrics displayMetrics = MainActivity.this.getResources().getDisplayMetrics();
+//        int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+//        return dp;
+//    }
+
+
+    public int getNavBarHeight() {
+        // navigation bar height
+        int navigationBarHeight = 0;
+        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            navigationBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
+        return navigationBarHeight;
+    }
+
+    // This snippet hides the system bars.
+    private void hideSystemUI() {
+        // Set the IMMERSIVE flag.
+        // Set the content to appear under the system bars so that the content
+        // doesn't resize when the system bars hide and show.
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+    }
+
+    // This snippet shows the system bars. It does this by removing all the flags
+// except for the ones that make the content appear under the system bars.
+    private void showSystemUI() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
+
+    private void startTimer() {
+        timer_view = (ChronometerView) findViewById(R.id.timer_view);
+//        rc.setPauseTimeOffset(tinydb.getLong("TotalForegroundTime", 0));
+        timer_view.setOverallDuration(2 * 600);
+        timer_view.setWarningDuration(90);
+//        rc.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
+        timer_view.reset();
+        timer_view.run();
+    }
+
+    private void stopTimer() {
+//        addTimeToLog(workout_num, timer_view.getCurrentTime());
+        if (timer_view != null) {
+            timer_view.stop();
+        }
+//        workout_num = workout_num+1;
+    }
+
 
     public class SwipeDeckAdapter extends BaseAdapter {
 
@@ -150,10 +535,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ImageView imageView = (ImageView) v.findViewById(R.id.offer_image);
 
 
+            if (!images.isEmpty()){
+
+
             str_probCurrent_file_name = images.get(position);
 //        getResources().getIdentifier(str_partCurrent_file_name, "drawable", getPackageName()
 
             getDrawableResourceID(MainActivity.this, str_probCurrent_file_name);
+
 
 //            Picasso.with(context).load(R.drawable.food).fit().centerCrop().into(imageView);
 
@@ -162,6 +551,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .error(R.drawable.ic_empty)
                     .placeholder(R.drawable.card_blank)
                     .into(imageView);
+
+            }
 
 
             TextView textView = (TextView) v.findViewById(R.id.sample_text);
@@ -179,35 +570,62 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
             return v;
         }
+
     }
 
     public static int getDrawableResourceID(Context context, String drawableResourceName) {
         return context.getResources().getIdentifier(drawableResourceName, "drawable", context.getPackageName());
+
     }
 
     private void initializeImages() {
         images = new ArrayList<>();
         images.clear();
-        for (int i = 0; i < Constant.IMAGES.length; i++) {
-            images.add(Constant.IMAGES[i]);
+//        SwipeDeckAdapter.getItemId();
+    }
+
+    private void loadSuitsCards() {
+        initializeImages();
+        if (use_clubs) {
+            Collections.addAll(images, Constant.CLUBS);
         }
+
+        if (use_diamonds) {
+            Collections.addAll(images, Constant.DIAMONDS);
+        }
+
+        if (use_spades) {
+            Collections.addAll(images, Constant.SPADES);
+        }
+
+        if (use_hearts) {
+            Collections.addAll(images, Constant.HEARTS);
+        }
+
+        shuffleCards();
+    }
+
+
+    private void shuffleCards() {
         Collections.shuffle(images);
     }
 
     private void refresh() {
-        Log.d(TAG, String.valueOf(cardStack.getAdapterIndex()));
+//        Log.d(TAG, String.valueOf(swipeDeck.getAdapterIndex()));
         goToTopOfDeck();
-        initializeImages();
+//        initializeImages();
+        stopTimer();
+        startTimer();
     }
 
     private void setDeckSize(int size) {
-           images.subList(size, images.size()).clear();
+        images.subList(size, images.size()).clear();
     }
 
     private void goToTopOfDeck() {
-        for(int n=0; n<=cardStack.getAdapterIndex(); n++){
-            cardStack.unSwipeCard();
-            Log.d(TAG, String.valueOf(cardStack.getAdapterIndex()));
+        for (int n = 0; n <= swipeDeck.getAdapterIndex(); n++) {
+            swipeDeck.unSwipeCard();
+            Log.d(TAG, String.valueOf(swipeDeck.getAdapterIndex()));
         }
     }
 
