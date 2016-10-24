@@ -1,12 +1,11 @@
 package com.chrisgaddes.focus;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -25,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.chrisgaddes.focus.databinding.ActivityMainBinding;
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
 
 import java.util.ArrayList;
@@ -49,13 +48,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean timer_running;
 
-    private ChronometerView timer_view;
-
 
     private ArrayList<String> images;
     private String str_probCurrent_file_name;
-    private Toolbar toolbar;
-    private Toolbar swipe_down_bar;
+    //    private Toolbar toolbar;
+//    private Toolbar swipe_down_bar;
     private RelativeLayout main_layout;
     private float dX, dY;
     private float dx_down_pt, dy_down_pt;
@@ -63,29 +60,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean panel_open;
     private TextView debugging_text;
 
+    private ActivityMainBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
 
-
+        // TODO remove this hardcodedness
         size_panel = dpToPx(54 * 4 + 24);
 
         // As we're using a Toolbar, we should retrieve it and set it
         // to be our ActionBar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
+
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (binding.includedToolbarLayout.toolbar != null) {
+            setSupportActionBar(binding.includedToolbarLayout.toolbar);
 //            toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
         }
 
-        swipe_down_bar = (Toolbar) findViewById(R.id.toolbar);
-        main_layout = (RelativeLayout) findViewById(R.id.main_layout);
+//        swipe_down_bar = toolbar;
         debugging_text = (TextView) findViewById(R.id.debugging_text);
 
         // Swipe down "menu"
-        swipe_down_bar.setOnTouchListener(new View.OnTouchListener() {
+        binding.includedToolbarLayout.toolbar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -103,9 +102,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     case MotionEvent.ACTION_MOVE:
                         String text_debug = "event.getRawY: " + String.valueOf(event.getRawY()) + "\n panel: " + String.valueOf(size_panel) + "\n dY: " + String.valueOf(dY);
-                        debugging_text.setText(text_debug);
+                        binding.debuggingText.setText(text_debug);
 
-                        main_layout.animate()
+                        binding.mainLayout.animate()
                                 //.x(event.getRawX() + dX)
                                 .y(event.getRawY() + dY)
                                 .setDuration(0)
@@ -120,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (!panel_open) {
 
                             if (event.getRawY() < dpToPx(75)) {
-                                main_layout.animate()
+                                binding.mainLayout.animate()
                                         //.x(event.getRawX() + dX)
                                         .y(event.getRawY() + dY)
                                         .setDuration(200)
@@ -129,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 panel_open = false;
 
                             } else if (event.getRawY() >= dpToPx(75)) {
-                                main_layout.animate()
+                                binding.mainLayout.animate()
                                         //.x(event.getRawX() + dX)
                                         .y(size_panel)
                                         .setDuration(200)
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         } else {
 
                             if (event.getRawY() < size_panel - dY - dpToPx(125)) {
-                                main_layout.animate()
+                                binding.mainLayout.animate()
                                         //.x(event.getRawX() + dX)
                                         .y(event.getRawY() + dY)
                                         .setDuration(200)
@@ -149,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 panel_open = false;
 
                             } else if (event.getRawY() >= size_panel - dY - dpToPx(125)) {
-                                main_layout.animate()
+                                binding.mainLayout.animate()
                                         //.x(event.getRawX() + dX)
                                         .y(size_panel)
                                         .setDuration(200)
@@ -169,13 +168,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
 
-        CheckBox ckbx_spades = (CheckBox) findViewById(R.id.ckbx_spades);
-        CheckBox ckbx_hearts = (CheckBox) findViewById(R.id.ckbx_hearts);
-        CheckBox ckbx_clubs = (CheckBox) findViewById(R.id.ckbx_clubs);
-        CheckBox ckbx_diamonds = (CheckBox) findViewById(R.id.ckbx_diamonds);
+//        CheckBox ckbx_spades = (CheckBox) findViewById(R.id.ckbx_spades);
+//        CheckBox ckbx_hearts = (CheckBox) findViewById(R.id.ckbx_hearts);
+//        CheckBox ckbx_clubs = (CheckBox) findViewById(R.id.ckbx_clubs);
+//        CheckBox ckbx_diamonds = (CheckBox) findViewById(R.id.ckbx_diamonds);
+
+//        binding.
 
         // sets listeners on suits checkboxes
-        ckbx_spades.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        binding.includedOptionsPanel.ckbxSpades.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
@@ -185,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        ckbx_hearts.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.includedOptionsPanel.ckbxHearts.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
@@ -194,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        ckbx_clubs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.includedOptionsPanel.ckbxClubs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
@@ -203,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        ckbx_diamonds.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        binding.includedOptionsPanel.ckbxDiamonds.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
@@ -233,20 +235,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        SwipeFrameLayout swipeFrameLayout = (SwipeFrameLayout) findViewById(R.id.swipeLayout);
 //        swipeFrameLayout.setStatusBarBackgroundColor();
 
-
-        swipeDeck = (SwipeDeck)
-
-                findViewById(R.id.swipe_deck);
-
-        swipeDeck.setPadding(0,
-
-                getToolbarHeight(),
-
-                0, 0); //getStatusBarHeight()
-
-        dragCheckbox = (CheckBox)
-
-                findViewById(R.id.checkbox_drag);
+//        binding.swipeDeck.setPadding(0, getToolbarHeight(),0, 0); //getStatusBarHeight()
+//
+//        binding.checkboxDrag = (CheckBox)
+//
+//                findViewById(R.id.checkbox_drag);
 
 
         testData = new ArrayList<>();
@@ -264,13 +257,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 SwipeDeckAdapter(testData, this);
 
-        if (swipeDeck != null)
+        if (binding.swipeDeck != null)
 
         {
-            swipeDeck.setAdapter(adapter);
+            binding.swipeDeck.setAdapter(adapter);
         }
 
-        swipeDeck.setCallback(new SwipeDeck.SwipeDeckCallback()
+        binding.swipeDeck.setCallback(new SwipeDeck.SwipeDeckCallback()
 
         {
             @Override
@@ -292,30 +285,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         // sets left and right images which appear on each respective swipe
-        swipeDeck.setLeftImage(R.id.left_image);
-        swipeDeck.setRightImage(R.id.right_image);
+        binding.swipeDeck.setLeftImage(R.id.left_image);
+        binding.swipeDeck.setRightImage(R.id.right_image);
 
         // sets onClickListeners for views
-        Button btn = (Button) findViewById(R.id.button_left);
-        btn.setOnClickListener(this);
+        binding.buttonLeft.setOnClickListener(this);
+        binding.buttonRight.setOnClickListener(this);
 
-        Button btn2 = (Button) findViewById(R.id.button_right);
-        btn2.setOnClickListener(this);
 
-        Button btn3 = (Button) findViewById(R.id.button_center);
-        btn3.setOnClickListener(this);
-
-        ImageView btn4 = (ImageView) findViewById(R.id.btn_spades_ic);
-        btn4.setOnClickListener(this);
-
-        ImageView btn5 = (ImageView) findViewById(R.id.btn_hearts_ic);
-        btn5.setOnClickListener(this);
-
-        ImageView btn6 = (ImageView) findViewById(R.id.btn_clubs_ic);
-        btn6.setOnClickListener(this);
-
-        ImageView btn7 = (ImageView) findViewById(R.id.btn_diamonds_ic);
-        btn7.setOnClickListener(this);
+        binding.buttonCenter.setOnClickListener(this);
+        binding.includedOptionsPanel.btnSpadesIc.setOnClickListener(this);
+        binding.includedOptionsPanel.btnHeartsIc.setOnClickListener(this);
+        binding.includedOptionsPanel.btnClubsIc.setOnClickListener(this);
+        binding.includedOptionsPanel.btnDiamondsIc.setOnClickListener(this);
 
         // Loads deck
         loadSuitsCards();
@@ -326,15 +308,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
 
             case R.id.button_left:
-                swipeDeck.swipeTopCardLeft(500);
+                binding.swipeDeck.swipeTopCardLeft(500);
                 break;
 
             case R.id.button_right:
-                swipeDeck.swipeTopCardRight(180);
+                binding.swipeDeck.swipeTopCardRight(180);
                 break;
 
             case R.id.button_center:
-                swipeDeck.unSwipeCard();
+                binding.swipeDeck.unSwipeCard();
                 break;
 
             case R.id.btn_spades_ic:
@@ -383,51 +365,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    protected void setStatusBarTranslucent(boolean makeTranslucent) {
-        if (makeTranslucent) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-    }
-
-    protected void setNavBarTranslucent(boolean makeTranslucent) {
-        if (makeTranslucent) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        }
-    }
-
-    // A method to find height of the status bar
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
-    // Calculate ActionBar height
-    public int getToolbarHeight() {
-        int result = 0;
-        TypedValue tv = new TypedValue();
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-            result = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-        }
-        return result;
-    }
-
-    public void hideStatusBar(View view) {
-        // Hide status bar
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    public void showStatusBar(View view) {
-        // Show status bar
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
 
     // converts dp to pixels
     private int dpToPx(int dp) {
@@ -479,19 +416,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void startTimer() {
-        timer_view = (ChronometerView) findViewById(R.id.timer_view);
+//        timer_view = (ChronometerView) findViewById(R.id.timer_view);
 //        rc.setPauseTimeOffset(tinydb.getLong("TotalForegroundTime", 0));
-        timer_view.setOverallDuration(2 * 600);
-        timer_view.setWarningDuration(90);
+        binding.timerView.setOverallDuration(2 * 600);
+        binding.timerView.setWarningDuration(90);
 //        rc.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
-        timer_view.reset();
-        timer_view.run();
+        binding.timerView.reset();
+        binding.timerView.run();
     }
 
     private void stopTimer() {
 //        addTimeToLog(workout_num, timer_view.getCurrentTime());
-        if (timer_view != null) {
-            timer_view.stop();
+        if (binding.timerView != null) {
+            binding.timerView.stop();
         }
 //        workout_num = workout_num+1;
     }
@@ -535,23 +472,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ImageView imageView = (ImageView) v.findViewById(R.id.offer_image);
 
 
-            if (!images.isEmpty()){
-
-
-            str_probCurrent_file_name = images.get(position);
+            if (!images.isEmpty()) {
+                str_probCurrent_file_name = images.get(position);
 //        getResources().getIdentifier(str_partCurrent_file_name, "drawable", getPackageName()
 
-            getDrawableResourceID(MainActivity.this, str_probCurrent_file_name);
+                getDrawableResourceID(MainActivity.this, str_probCurrent_file_name);
 
 
 //            Picasso.with(context).load(R.drawable.food).fit().centerCrop().into(imageView);
 
-            Glide.with(MainActivity.this)
-                    .load(getDrawableResourceID(MainActivity.this, str_probCurrent_file_name))
-                    .error(R.drawable.ic_empty)
-                    .placeholder(R.drawable.card_blank)
-                    .into(imageView);
-
+                Glide.with(MainActivity.this)
+                        .load(getDrawableResourceID(MainActivity.this, str_probCurrent_file_name))
+                        .error(R.drawable.ic_empty)
+                        .placeholder(R.drawable.card_blank)
+                        .into(imageView);
             }
 
 
@@ -618,15 +552,75 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startTimer();
     }
 
-    private void setDeckSize(int size) {
-        images.subList(size, images.size()).clear();
-    }
-
     private void goToTopOfDeck() {
-        for (int n = 0; n <= swipeDeck.getAdapterIndex(); n++) {
-            swipeDeck.unSwipeCard();
-            Log.d(TAG, String.valueOf(swipeDeck.getAdapterIndex()));
+        for (int n = 0; n <= binding.swipeDeck.getAdapterIndex(); n++) {
+            binding.swipeDeck.unSwipeCard();
+            Log.d(TAG, String.valueOf(binding.swipeDeck.getAdapterIndex()));
         }
     }
 
+    protected void setStatusBarTranslucent(boolean makeTranslucent) {
+        if (makeTranslucent) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
 }
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  STUFF THAT IS SAVED FOR LATER
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//    private void setDeckSize(int size) {
+//        images.subList(size, images.size()).clear();
+//    }
+//
+
+//
+//    protected void setNavBarTranslucent(boolean makeTranslucent) {
+//        if (makeTranslucent) {
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//        } else {
+//            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//        }
+//    }
+//
+//    // A method to find height of the status bar
+//    public int getStatusBarHeight() {
+//        int result = 0;
+//        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+//        if (resourceId > 0) {
+//            result = getResources().getDimensionPixelSize(resourceId);
+//        }
+//        return result;
+//    }
+//
+//    // Calculate ActionBar height
+//    public int getToolbarHeight() {
+//        int result = 0;
+//        TypedValue tv = new TypedValue();
+//        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+//            result = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+//        }
+//        return result;
+//    }
+//
+//    public void hideStatusBar(View view) {
+//        // Hide status bar
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//    }
+//
+//    public void showStatusBar(View view) {
+//        // Show status bar
+//        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//    }
+//
+

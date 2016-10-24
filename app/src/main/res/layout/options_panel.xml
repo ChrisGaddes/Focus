@@ -1,151 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.percent.PercentRelativeLayout android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ImageView
-        android:id="@+id/btn_spades_ic"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:src="@drawable/ic_spades_small" />
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <CheckBox
-        android:id="@+id/ckbx_spades"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:layout_toRightOf="@id/btn_spades_ic" />
+        <ImageView
+            android:id="@+id/btn_spades_ic"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:src="@drawable/ic_spades_small" />
 
-    <ImageView
-        android:id="@+id/btn_hearts_ic"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:layout_below="@id/btn_spades_ic"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:src="@drawable/ic_hearts_small" />
+        <CheckBox
+            android:id="@+id/ckbx_spades"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_toRightOf="@id/btn_spades_ic"
+            android:padding="@dimen/activity_horizontal_margin" />
 
-    <CheckBox
-        android:id="@+id/ckbx_hearts"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:layout_below="@id/ckbx_spades"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:layout_toRightOf="@id/btn_hearts_ic" />
+        <ImageView
+            android:id="@+id/btn_hearts_ic"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_below="@id/btn_spades_ic"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:src="@drawable/ic_hearts_small" />
 
-    <ImageView
-        android:id="@+id/btn_clubs_ic"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:layout_below="@id/btn_hearts_ic"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:src="@drawable/ic_clubs_small" />
+        <CheckBox
+            android:id="@+id/ckbx_hearts"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_below="@id/ckbx_spades"
+            android:layout_toRightOf="@id/btn_hearts_ic"
+            android:padding="@dimen/activity_horizontal_margin" />
 
-    <CheckBox
-        android:id="@+id/ckbx_clubs"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:layout_below="@id/ckbx_hearts"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:layout_toRightOf="@id/btn_clubs_ic" />
+        <ImageView
+            android:id="@+id/btn_clubs_ic"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_below="@id/btn_hearts_ic"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:src="@drawable/ic_clubs_small" />
 
-    <ImageView
-        android:id="@+id/btn_diamonds_ic"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:layout_below="@id/btn_clubs_ic"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:src="@drawable/ic_diamonds_small" />
+        <CheckBox
+            android:id="@+id/ckbx_clubs"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_below="@id/ckbx_hearts"
+            android:layout_toRightOf="@id/btn_clubs_ic"
+            android:padding="@dimen/activity_horizontal_margin" />
 
-
-    <CheckBox
-        android:id="@+id/ckbx_diamonds"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:layout_below="@id/ckbx_clubs"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:layout_toRightOf="@id/btn_diamonds_ic" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@id/btn_spades_ic"
-        android:layout_alignTop="@id/btn_spades_ic"
-        android:layout_alignBottom="@id/btn_spades_ic"
-        />
+        <ImageView
+            android:id="@+id/btn_diamonds_ic"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_below="@id/btn_clubs_ic"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:src="@drawable/ic_diamonds_small" />
 
 
+        <CheckBox
+            android:id="@+id/ckbx_diamonds"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_below="@id/ckbx_clubs"
+            android:layout_toRightOf="@id/btn_diamonds_ic"
+            android:padding="@dimen/activity_horizontal_margin" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@id/btn_hearts_ic"
-        android:layout_alignTop="@id/btn_hearts_ic"
-        android:layout_alignBottom="@id/btn_hearts_ic"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@id/btn_clubs_ic"
-        android:layout_alignTop="@id/btn_clubs_ic"
-        android:layout_alignBottom="@id/btn_clubs_ic" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@id/btn_diamonds_ic"
-        android:layout_alignTop="@id/btn_diamonds_ic"
-        android:layout_alignBottom="@id/btn_diamonds_ic" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/btn_spades_ic"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/btn_spades_ic"
+            android:layout_toRightOf="@id/btn_spades_ic" />
 
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/btn_hearts_ic"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/btn_hearts_ic"
+            android:layout_toRightOf="@id/btn_hearts_ic" />
 
-    <!--<org.adw.library.widgets.discreteseekbar.DiscreteSeekBar-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentEnd="true"-->
-    <!--android:layout_toRightOf="@id/btn_spades_ic"-->
-    <!--android:layout_alignTop="@id/btn_spades_ic"-->
-    <!--android:layout_alignBottom="@id/btn_spades_ic"-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/btn_clubs_ic"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/btn_clubs_ic"
+            android:layout_toRightOf="@id/btn_clubs_ic" />
 
-    <!--app:dsb_min="0"-->
-    <!--app:dsb_max="13"-->
-    <!--/>-->
-
-    <!--<org.adw.library.widgets.discreteseekbar.DiscreteSeekBar-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentEnd="true"-->
-    <!--android:layout_toRightOf="@id/btn_hearts_ic"-->
-    <!--android:layout_alignTop="@id/btn_hearts_ic"-->
-    <!--android:layout_alignBottom="@id/btn_hearts_ic"-->
-    <!--app:dsb_min="0"-->
-    <!--app:dsb_max="13"-->
-    <!--/>-->
-
-    <!--<org.adw.library.widgets.discreteseekbar.DiscreteSeekBar-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentEnd="true"-->
-    <!--android:layout_toRightOf="@id/btn_clubs_ic"-->
-    <!--android:layout_alignTop="@id/btn_clubs_ic"-->
-    <!--android:layout_alignBottom="@id/btn_clubs_ic"-->
-    <!--app:dsb_min="0"-->
-    <!--app:dsb_max="13"/>-->
-
-    <!--<org.adw.library.widgets.discreteseekbar.DiscreteSeekBar-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentEnd="true"-->
-    <!--android:layout_toRightOf="@id/btn_diamonds_ic"-->
-    <!--android:layout_alignTop="@id/btn_diamonds_ic"-->
-    <!--android:layout_alignBottom="@id/btn_diamonds_ic"-->
-    <!--app:dsb_min="0"-->
-    <!--app:dsb_max="13"/>-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/btn_diamonds_ic"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/btn_diamonds_ic"
+            android:layout_toRightOf="@id/btn_diamonds_ic" />
 
 
-</android.support.percent.PercentRelativeLayout>
+        <!--<org.adw.library.widgets.discreteseekbar.DiscreteSeekBar-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_toRightOf="@id/btn_spades_ic"-->
+        <!--android:layout_alignTop="@id/btn_spades_ic"-->
+        <!--android:layout_alignBottom="@id/btn_spades_ic"-->
+
+        <!--app:dsb_min="0"-->
+        <!--app:dsb_max="13"-->
+        <!--/>-->
+
+        <!--<org.adw.library.widgets.discreteseekbar.DiscreteSeekBar-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_toRightOf="@id/btn_hearts_ic"-->
+        <!--android:layout_alignTop="@id/btn_hearts_ic"-->
+        <!--android:layout_alignBottom="@id/btn_hearts_ic"-->
+        <!--app:dsb_min="0"-->
+        <!--app:dsb_max="13"-->
+        <!--/>-->
+
+        <!--<org.adw.library.widgets.discreteseekbar.DiscreteSeekBar-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_toRightOf="@id/btn_clubs_ic"-->
+        <!--android:layout_alignTop="@id/btn_clubs_ic"-->
+        <!--android:layout_alignBottom="@id/btn_clubs_ic"-->
+        <!--app:dsb_min="0"-->
+        <!--app:dsb_max="13"/>-->
+
+        <!--<org.adw.library.widgets.discreteseekbar.DiscreteSeekBar-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_toRightOf="@id/btn_diamonds_ic"-->
+        <!--android:layout_alignTop="@id/btn_diamonds_ic"-->
+        <!--android:layout_alignBottom="@id/btn_diamonds_ic"-->
+        <!--app:dsb_min="0"-->
+        <!--app:dsb_max="13"/>-->
+
+
+    </android.support.percent.PercentRelativeLayout>
+</layout>
