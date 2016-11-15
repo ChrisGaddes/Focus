@@ -3,6 +3,7 @@ package com.chrisgaddes.focus;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -24,6 +25,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.chrisgaddes.focus.databinding.ActivityOtherBinding;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
 
 import java.util.ArrayList;
@@ -61,6 +64,10 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
     private TextView debugging_text;
 
     private ActivityOtherBinding binding;
+    private boolean click;
+    private int mActivePointerId;
+    private float initialXPress;
+    private float initialYPress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +91,8 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
 //            toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
         }
 
+//        startCountdownTimer(3000, 1000);
+
 //        swipe_down_bar = toolbar;
         debugging_text = (TextView) findViewById(R.id.debugging_text);
 
@@ -92,26 +101,79 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
+
                     case MotionEvent.ACTION_DOWN:
+                        click = true;
+                        //gesture has begun
+                        float x;
+                        float y;
+
+                        //cancel any current animations
+                        v.clearAnimation();
+
+                        mActivePointerId = event.getPointerId(0);
+
+                        x = event.getX();
+                        y = event.getY();
+
+                        // TODO remove this nonsense
                         if (!panel_open) {
                             dY = v.getY() - event.getRawY();
                         } else {
                             dY = size_panel - event.getRawY();
                         }
+
+                        initialXPress = x;
+                        initialYPress = y;
+
                         break;
 
                     case MotionEvent.ACTION_MOVE:
-                        String text_debug = "event.getRawY: " + String.valueOf(event.getRawY()) + "\n panel: " + String.valueOf(size_panel) + "\n dY: " + String.valueOf(dY);
-                        binding.debuggingText.setText(text_debug);
+                        //gesture is in progress
+
+                        final int pointerIndex = event.findPointerIndex(mActivePointerId);
+                        // prevents multiple touches
+                        if (pointerIndex < 0 || pointerIndex > 0) {
+                            break;
+                        }
+
+                        final float xMove = event.getX(pointerIndex);
+                        final float yMove = event.getY(pointerIndex);
+
+                        //calculate distance moved
+                        final float dx = xMove - initialXPress;
+                        final float dy = yMove - initialYPress;
+
+                        Log.d("X:", "" + v.getX());
+
+                        //calc rotation here
+                        float posX = binding.mainLayout.getX() + dx;
+                        float posY = binding.mainLayout.getY() + dy;
+
+                        //in this circumstance consider the motion a click
+                        if (Math.abs(dx + dy) > 5) click = false;
+
+
+//                        String text_debug = "event.getRawY: " + String.valueOf(event.getRawY()) + "\n panel: " + String.valueOf(size_panel) + "\n dY: " + String.valueOf(dY);
+//                        binding.debuggingText.setText(text_debug);
+
+                        // animates mainLayout
                         binding.mainLayout.animate()
                                 //.x(event.getRawX() + dX)
-                                .y(event.getRawY() + dY)
+                                .y(posY)
                                 .setDuration(0)
                                 .start();
                         break;
 
                     case MotionEvent.ACTION_UP:
+                        //gesture has finished
+
                         dY = v.getY() - event.getRawY();
+
+                        //check if this is a click event and then perform a click
+                        if (click) {
+                            // v.performClick();
+                        }
 
                         // TODO fix interpolators to not always close on touch
                         if (!panel_open) {
@@ -158,14 +220,12 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
         });
 
 
-
-
         CompoundButton.OnCheckedChangeListener listener =
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         String key = null;
-                        switch(buttonView.getId()) {
+                        switch (buttonView.getId()) {
                             case R.id.ckbx_spades:
                                 key = "key1";
                                 use_spades = isChecked;
@@ -186,88 +246,24 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
                                 return;
                         }
                         // Save the state here using key
-
                         loadSuitsCards();
                     }
                 };
-
 
         binding.includedOptionsPanel.ckbxSpades.setOnCheckedChangeListener(listener);
         binding.includedOptionsPanel.ckbxHearts.setOnCheckedChangeListener(listener);
         binding.includedOptionsPanel.ckbxClubs.setOnCheckedChangeListener(listener);
         binding.includedOptionsPanel.ckbxDiamonds.setOnCheckedChangeListener(listener);
 
-
-//        // sets listeners on suits checkboxes
-//        binding.includedOptionsPanel.ckbxSpades.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView,
-//                                         boolean isChecked) {
-//                use_spades = isChecked;
-//                // TODO For efficiency, make it so it doesn't load all suits each time a checkbox is changed, but just does it when the settings panel is closed
-//                loadSuitsCards();
-//            }
-//        });
 //
-//        binding.includedOptionsPanel.ckbxHearts.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView,
-//                                         boolean isChecked) {
-//                use_hearts = isChecked;
-//                loadSuitsCards();
-//            }
-//        });
-//
-//        binding.includedOptionsPanel.ckbxClubs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView,
-//                                         boolean isChecked) {
-//                use_clubs = isChecked;
-//                loadSuitsCards();
-//            }
-//        });
-//
-//        binding.includedOptionsPanel.ckbxDiamonds.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView,
-//                                         boolean isChecked) {
-//                use_diamonds = isChecked;
-//                loadSuitsCards();
-//            }
-//        });
-
-
-//        swipe_down_bar.setOnTouchListener(new View.OnTouchListener() {
-
-
-//        hideSystemUI();
-
-
-// Sets bars translucent
-//        setStatusBarTranslucent(true);
-//        setNavBarTranslucent(true);
-
-//        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
-
-// Now retrieve the DrawerLayout so that we can set the status bar color.
-// This only takes effect on Lollipop, or when using translucentStatusBar
-// on KitKat.
-//        SwipeFrameLayout swipeFrameLayout = (SwipeFrameLayout) findViewById(R.id.swipeLayout);
-//        swipeFrameLayout.setStatusBarBackgroundColor();
-
-
-//
-//        binding.checkboxDrag = (CheckBox)
-//
-//                findViewById(R.id.checkbox_drag);
+//        binding.checkboxDrag = (CheckBox)             findViewById(R.id.checkbox_drag);
 
 
         testData = new ArrayList<>();
         for (
+            // remove hardcoded 52
                 int i = 0;
-                i < 53; i++)
+                i < 52; i++)
 
         {
             testData.add(String.valueOf(i));
@@ -275,36 +271,8 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
 
         initializeImages();
 
-        adapter = new
+        setSwipeAdapter(testData);
 
-                SwipeDeckAdapter(testData, this);
-
-        if (binding.swipeDeck != null)
-
-        {
-            binding.swipeDeck.setAdapter(adapter);
-        }
-
-        binding.swipeDeck.setCallback(new SwipeDeck.SwipeDeckCallback()
-
-        {
-            @Override
-            public void cardSwipedLeft(long stableId) {
-                Log.i("OtherActivity", "card was swiped left, position in adapter: " + stableId);
-            }
-
-            @Override
-            public void cardSwipedRight(long stableId) {
-                Log.i("OtherActivity", "card was swiped right, position in adapter: " + stableId);
-
-            }
-
-//            @Override
-
-            public boolean isDragEnabled(long itemId) {
-                return dragCheckbox.isChecked();
-            }
-        });
 
         // sets left and right images which appear on each respective swipe
         binding.swipeDeck.setLeftImage(R.id.left_image);
@@ -323,6 +291,33 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
 
         // Loads deck
         loadSuitsCards();
+    }
+
+    private void setSwipeAdapter(ArrayList<String> data) {
+        // sets SwipeDeckAdapter with testData Arraylist
+        adapter = new SwipeDeckAdapter(data, this);
+//        if (binding.swipeDeck != null) {
+        binding.swipeDeck.setAdapter(adapter);
+//        }
+
+        binding.swipeDeck.setCallback(new SwipeDeck.SwipeDeckCallback() {
+            @Override
+            public void cardSwipedLeft(long stableId) {
+                Log.i("OtherActivity", "card was swiped left, position in adapter: " + stableId);
+            }
+
+            @Override
+            public void cardSwipedRight(long stableId) {
+                Log.i("OtherActivity", "card was swiped right, position in adapter: " + stableId);
+
+            }
+
+//            @Override
+
+            public boolean isDragEnabled(long itemId) {
+                return dragCheckbox.isChecked();
+            }
+        });
     }
 
     @Override
@@ -374,7 +369,8 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                refresh();
+                startCountdownTimer(5000, 1000);
+//                refresh();
                 return true;
             case R.id.menu_pause:
 //                stopTimer();
@@ -401,6 +397,47 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
 //        int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
 //        return dp;
 //    }
+
+
+    private void startCountdownTimer(long millisInFuture, long countDownInterval) {
+
+        binding.countdownView.setVisibility(View.VISIBLE);
+        binding.countdownViewBackground.setVisibility(View.VISIBLE);
+
+        new CountDownTimer(millisInFuture, countDownInterval) {
+
+            public void onTick(long millisUntilFinished) {
+                YoYo.with(Techniques.FadeIn)
+                        .duration(700)
+                        .playOn(binding.countdownView);
+                String str = String.valueOf(millisUntilFinished / 1000 +1);
+                binding.countdownView.setText(str);
+
+                if (millisUntilFinished < 2500) {
+                    YoYo.with(Techniques.FadeOut)
+                            .duration(700)
+                            .playOn(binding.countdownViewBackground);
+                }
+
+                //here you can have your logic to set text to edittext
+            }
+
+            public void onFinish() {
+                binding.countdownView.setVisibility(View.GONE);
+                binding.countdownViewBackground.setVisibility(View.GONE);
+                refresh();
+            }
+
+        }.start();
+
+//        for (int n = 3; n >= 0; n--) {
+//            YoYo.with(Techniques.FadeIn)
+//                    .duration(700)
+//                    .playOn(binding.countdownView);
+//
+////            binding.countdownView.setAlpha();
+//            binding.countdownView.setText(String.valueOf(n));
+    }
 
 
     public int getNavBarHeight() {
@@ -511,7 +548,6 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
                         .into(imageView);
             }
 
-
             TextView textView = (TextView) v.findViewById(R.id.sample_text);
             String item = (String) getItem(position);
             textView.setText(item);
@@ -519,8 +555,10 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("Layer type: ", Integer.toString(v.getLayerType()));
-                    Log.i("Hardware Accel type:", Integer.toString(View.LAYER_TYPE_HARDWARE));
+                    // runs if clicked on card
+
+//                    Log.i("Layer type: ", Integer.toString(v.getLayerType()));
+//                    Log.i("Hardware Accel type:", Integer.toString(View.LAYER_TYPE_HARDWARE));
                     /*Intent i = new Intent(v.getContext(), BlankActivity.class);
                     v.getContext().startActivity(i);*/
                 }
@@ -611,11 +649,8 @@ public class OtherActivity extends AppCompatActivity implements View.OnClickList
     private void addPaddingForStatusBar() {
         binding.outerFrameLayout.setPadding(0, getStatusBarHeight(), 0, 0); //getStatusBarHeight()
     }
+
 }
-
-
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
+import com.mindorks.placeholderview.annotations.Click;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
@@ -16,6 +17,9 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeInState;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 
+/**
+ * Created by janisharali on 19/08/16.
+ */
 @Layout(R.layout.tinder_card_view)
 public class TinderCard {
 
@@ -43,6 +47,12 @@ public class TinderCard {
         Glide.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
         nameAgeTxt.setText(mProfile.getName() + ", " + mProfile.getAge());
         locationNameTxt.setText(mProfile.getLocation());
+    }
+
+    @Click(R.id.profileImageView)
+    private void onClick(){
+        Log.d("EVENT", "profileImageView click");
+        mSwipeView.addView(this);
     }
 
     @SwipeOut

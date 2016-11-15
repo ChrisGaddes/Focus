@@ -1,8 +1,9 @@
 package com.chrisgaddes.focus;
-
 import android.content.Context;
-import android.os.Bundle;
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 
 import com.mindorks.placeholderview.SwipeDecor;
@@ -21,13 +22,19 @@ public class MainActivity extends AppCompatActivity {
         mSwipeView = (SwipePlaceHolderView)findViewById(R.id.swipeView);
         mContext = getApplicationContext();
 
+        int bottomMargin = Utils.dpToPx(160);
+        Point windowSize = Utils.getDisplaySize(getWindowManager());
         mSwipeView.getBuilder()
                 .setDisplayViewCount(3)
+                .setHeightSwipeDistFactor(10)
+                .setWidthSwipeDistFactor(5)
                 .setSwipeDecor(new SwipeDecor()
-                        .setPaddingTop(20)
+                        .setViewWidth(windowSize.x)
+                        .setViewHeight(windowSize.y - bottomMargin)
+                        .setViewGravity(Gravity.TOP)
                         .setSwipeRotationAngle(0)
+                        .setPaddingTop(20)
                         .setRelativeScale(0.01f)
-
                         .setSwipeInMsgLayoutId(R.layout.tinder_swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.tinder_swipe_out_msg_view));
 
